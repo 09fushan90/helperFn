@@ -1,287 +1,434 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Helper</title>
 <style>
-body {
-    background: #000;
-    color: #fff;
-    margin: 0;
-    font-family: Arial, sans-serif;
-    overflow-x: hidden;
-    padding-top: 100px;
-    text-align: center;
+:root{
+  --bg:#000;
+  --card:#111;
+  --text:#fff;
+  --accent: rgba(255,255,255,0.9);
+  --muted: rgba(255,255,255,0.35);
+  --danger: #d33;
+  --glass: rgba(255,255,255,0.04);
 }
 
-/* Плавное появление с мягким свечением */
-@keyframes fadeInGlow {
-    0% { opacity: 0; transform: translateY(20px); text-shadow: 0 0 0px white; }
-    50% { opacity: 0.5; transform: translateY(10px); text-shadow: 0 0 6px white; }
-    100% { opacity: 1; transform: translateY(0); text-shadow: 0 0 12px white; }
-}
+/* Basic layout */
+html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);}
+.wrap{min-height:100vh; padding-top:84px; box-sizing:border-box; text-align:center; position:relative; overflow-x:hidden;}
 
-/* Скольжение экранов */
-.screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    min-height: 100vh;
-    padding-top: 100px;
-    transition: transform 0.6s ease, opacity 0.6s ease;
+/* Screens & transitions */
+.screen{
+  position:absolute; left:0; top:0; width:100%; min-height:100vh; padding-top:84px;
+  box-sizing:border-box; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  transition:transform .55s cubic-bezier(.22,.9,.32,1), opacity .45s ease;
+  opacity:0; transform:translateX(20%);
 }
+.screen.visible{ opacity:1; transform:translateX(0); pointer-events:all; }
+.screen.hidden{ opacity:0; pointer-events:none; transform:translateX(-20%); }
 
-/* Скрытые экраны */
-.screen.hidden {
-    opacity: 0;
-    pointer-events: none;
-}
+/* Title / lead animations */
+h1{ margin:0 0 12px; font-size:34px; text-shadow:0 0 12px rgba(255,255,255,0.12); opacity:0; transform:translateY(12px); transition:opacity .9s ease, transform .9s ease; }
+h1.visibleTxt{ opacity:1; transform:translateY(0); text-shadow:0 0 18px rgba(255,255,255,0.08); }
+.lead{ margin:0 0 8px; color:var(--muted); max-width:920px; padding:0 18px; opacity:0; transform:translateY(12px); transition:opacity .9s ease .12s, transform .9s ease .12s; }
+.lead.visibleTxt{ opacity:1; transform:translateY(0); }
 
-/* Заголовки и тексты */
-h1, h2, p {
-    opacity: 0;
-    animation: fadeInGlow 1s forwards;
-}
-#screen1 h1 { animation-delay: 0.3s; }
-#screen1 p:nth-of-type(1) { animation-delay: 0.7s; }
-#screen1 p:nth-of-type(2) { animation-delay: 1s; }
+/* Buttons */
+.btn{ display:inline-block; margin:12px; padding:12px 22px; border-radius:12px; background:var(--card); color:var(--text); border:none; font-size:16px; cursor:pointer; box-shadow:0 0 10px rgba(255,255,255,0.06); transition:transform .18s ease, box-shadow .25s ease; }
+.btn:hover{ transform:scale(1.04); box-shadow:0 0 22px rgba(255,255,255,0.14); }
+.btn-admin{ background:purple; display:none; }
+.btn-logout{ background:var(--danger); display:none; color:#fff; }
 
-/* Кнопки */
-button {
-    padding: 14px 22px;
-    border-radius: 12px;
-    border: none;
-    margin: 10px;
-    font-size: 18px;
-    cursor: pointer;
-    color: #fff;
-    background: #111;
-    box-shadow: 0 0 8px rgba(255,255,255,0.5);
-    transition: transform 0.3s ease, box-shadow 0.4s ease;
-    opacity: 0;
-    animation: fadeInGlow 1s forwards;
+/* Form inputs */
+.form input{
+  width:360px; max-width:90%; padding:12px 14px; margin:8px 0; border-radius:12px; border:2px solid rgba(255,255,255,0.06);
+  background:var(--card); color:var(--text); font-size:16px; box-shadow: inset 0 4px 14px rgba(0,0,0,0.6);
 }
-#screen1 button:nth-of-type(1) { animation-delay: 1.3s; }
-#screen1 button:nth-of-type(2) { animation-delay: 1.6s; }
-#screen1 button:nth-of-type(3) { animation-delay: 1.9s; }
-#screen1 button:nth-of-type(4) { animation-delay: 2.2s; }
-#screen1 button:nth-of-type(5) { animation-delay: 2.5s; } /* кнопка Вийти */
-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(255,255,255,0.9);
-}
+.form input:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 18px rgba(255,255,255,0.06); background:#161616; }
 
-/* Поля ввода */
-input {
-    width: 300px;
-    max-width: 90%;
-    padding: 14px 20px;
-    margin: 10px 0;
-    border-radius: 12px;
-    border: 2px solid rgba(255,255,255,0.6);
-    background: #111;
-    color: #fff;
-    font-size: 18px;
-    outline: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 8px rgba(255,255,255,0.3);
-    opacity: 0;
-    animation: fadeInGlow 1s forwards;
+/* Arrow button */
+.arrow{
+  position:fixed; left:14px; top:14px; z-index:40; padding:8px 12px; border-radius:10px; border:2px solid #fff; background:transparent; color:#fff;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 0 10px rgba(255,255,255,0.06);
 }
-input:focus {
-    border-color: #fff;
-    box-shadow: 0 0 12px rgba(255,255,255,0.8);
-    background: #222;
-}
-#registerScreen input:nth-of-type(1), #loginScreen input:nth-of-type(1) { animation-delay: 0.5s; }
-#registerScreen input:nth-of-type(2), #loginScreen input:nth-of-type(2) { animation-delay: 0.8s; }
-#registerScreen input:nth-of-type(3) { animation-delay: 1.1s; }
+.arrow .icon{ display:inline-block; transition:transform .36s cubic-bezier(.2,.9,.3,1); }
+.arrow:hover .icon{ transform:translateX(-14px) scale(1.12); }
 
-/* Стрелки */
-.arrow {
-    position: absolute;
-    top: 20px;
-    left: 10px;
-    padding: 6px 12px;
-    border: 2px solid white;
-    border-radius: 10px;
-    background: none;
-    color: white;
-    font-size: 28px;
-    cursor: pointer;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.arrowIcon { display: inline-block; transition: transform 0.5s ease; }
-.arrow:hover .arrowIcon { transform: translateX(-15px) scale(1.3); }
+/* Modal notifications */
+.modal-bg{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); z-index:200; opacity:0; pointer-events:none; transition:opacity .2s ease; }
+.modal-bg.show{ opacity:1; pointer-events:all; }
+.modal-card{ background:var(--card); padding:20px 24px; border-radius:12px; color:var(--text); box-shadow:0 8px 30px rgba(0,0,0,0.6); max-width:92%; text-align:center; font-size:18px; }
 
-/* Модальное окно */
-.modal-bg {
-    display: none;
-    position: fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(3px);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-}
-.modal {
-    background: #111;
-    padding: 20px 30px;
-    border-radius: 15px;
-    text-align: center;
-    max-width: 90%;
-    color: #fff;
-    box-shadow: 0 0 20px #fff;
-    font-size: 20px;
-    animation: modalShow 0.3s ease;
-}
-@keyframes modalShow { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+/* Sites list */
+#sitesContainer{ display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin-top:20px; max-width:1100px; padding:0 12px; }
+.site-card{ width:260px; background:var(--card); border-radius:12px; padding:12px; color:#fff; display:flex; flex-direction:column; align-items:center; box-shadow:0 0 14px rgba(255,255,255,0.06); transition:transform .18s; }
+.site-card:hover{ transform:translateY(-6px); }
+.site-card .logo{ width:120px; height:120px; border-radius:50%; object-fit:cover; margin-bottom:10px; border:2px solid rgba(255,255,255,0.06); }
 
-.adminBtn { display: none; background: purple; box-shadow: 0 0 10px purple; margin-top: 20px; }
-#logoutBtn { display: none; background: red; box-shadow: 0 0 10px red; margin-top: 20px; }
+/* Small profile avatar */
+#profilePhoto{ max-width:80px; max-height:80px; margin-top:10px; border-radius:50%; border:2px solid #555; object-fit:cover; cursor:pointer; transition:transform .18s, border-color .18s; }
+#profilePhoto:hover{ transform:scale(1.08); border-color:#fff; }
+
+/* Photo preview modal */
+#photoModal{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.9); z-index:500; display:none; }
+#photoModal img{ max-width:90%; max-height:90%; border-radius:8px; }
+
+/* Create-site modal */
+.create-modal{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); z-index:400; display:none; }
+.create-card{ background:var(--card); padding:20px; border-radius:12px; width:92%; max-width:420px; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.7); }
+#siteImageDiv{ width:88px; height:88px; border-radius:50%; background:#111; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; cursor:pointer; border:2px dashed #555; overflow:hidden; }
+#siteImageDiv img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+/* responsive */
+@media (max-width:480px){ h1{ font-size:22px; } .form input{ width:88%; } #sitesContainer{ gap:12px; } .site-card{ width:190px; } }
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<!-- ЕКРАНИ -->
-<div id="screen1" class="screen">
-    <h1>Вітаю вас у Helper</h1>
-    <p>Тут ви можете переглянути та спробувати різні сайти, щоб зрозуміти, який формат підходить вам найкраще</p>
-    <p id="welcomeUser" style="font-size:22px;"></p>
-    <button onclick="goNext()">Переглянути сайти</button>
-    <button id="loginBtn" onclick="showLogin()">Увійти</button>
-    <button id="registerBtn" onclick="register()">Зареєструватися</button>
-    <button id="adminBtn" class="adminBtn" onclick="showUsersList()">Адмін панель</button>
-    <button id="logoutBtn" onclick="logout()">Вийти</button>
+  <!-- MAIN SCREEN -->
+  <div id="screen1" class="screen visible">
+    <h1 id="mainTitle">Helper</h1>
+    <p id="lead" class="lead">Тут ви можете переглянути та спробувати різні сайти, щоб зрозуміти, який формат підходить вам найкраще</p>
+    <p id="welcomeUser" style="font-size:20px; margin-top:8px;"></p>
+    <div style="margin-top:18px;">
+      <button id="viewBtn" class="btn">Переглянути сайти</button>
+      <button id="openLoginBtn" class="btn">Увійти</button>
+      <button id="openRegisterBtn" class="btn">Зареєструватися</button>
+      <button id="btnProfile" class="btn">Профіль</button>
+      <button id="adminBtn" class="btn btn-admin">Адмін панель</button>
+      <button id="logoutBtn" class="btn btn-logout">Вийти</button>
+    </div>
+  </div>
+
+  <!-- VIEW SITES SCREEN -->
+  <div id="screen2" class="screen hidden">
+    <button class="arrow" onclick="showScreen('screen1')"><span class="icon">⬅</span></button>
+    <h2 style="margin-top:40px;">Перегляд сайтів</h2>
+    <div id="siteActions" style="margin-top:8px;"></div>
+    <div id="sitesContainer"></div>
+  </div>
+
+  <!-- PROFILE SCREEN -->
+  <div id="profileScreen" class="screen hidden">
+    <button class="arrow" onclick="showScreen('screen1')"><span class="icon">⬅</span></button>
+    <h2 id="profileHeader"></h2>
+    <div id="profileActions" style="margin-top:8px;"></div>
+    <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;">
+    <img id="profilePhoto" alt="avatar">
+  </div>
+
+  <!-- REGISTER SCREEN -->
+  <div id="registerScreen" class="screen hidden">
+    <button class="arrow" onclick="showScreen('screen1')"><span class="icon">⬅</span></button>
+    <h2 style="margin-top:40px;">Реєстрація</h2>
+    <div class="form">
+      <input id="regName" type="text" placeholder="Ім'я">
+      <input id="regEmail" type="email" placeholder="Пошта (name@gmail.com)">
+      <input id="regPass" type="password" placeholder="Пароль (мінімум 6 символів)">
+      <button id="regSaveBtn" class="btn" style="margin-top:8px;">Зберегти акаунт</button>
+    </div>
+  </div>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="screen hidden">
+    <button class="arrow" onclick="showScreen('screen1')"><span class="icon">⬅</span></button>
+    <h2 style="margin-top:40px;">Вхід</h2>
+    <div class="form">
+      <input id="loginEmail" type="email" placeholder="Пошта">
+      <input id="loginPassword" type="password" placeholder="Пароль">
+      <button id="loginBtnScreen" class="btn" style="margin-top:8px;">Увійти</button>
+    </div>
+  </div>
+
+  <!-- ADMIN SCREEN -->
+  <div id="adminScreen" class="screen hidden">
+    <button class="arrow" onclick="showScreen('screen1')"><span class="icon">⬅</span></button>
+    <h2 style="margin-top:40px;">Адмін панель</h2>
+    <div id="usersList" style="margin-top:18px; font-size:18px;"></div>
+    <button class="btn" onclick="showScreen('screen1')" style="margin-top:12px;">Повернутися</button>
+  </div>
+
 </div>
 
-<div id="screen2" class="screen hidden">
-    <button onclick="goBack()" class="arrow"><span class="arrowIcon">⬅</span></button>
-    <h2>Перегляд сайтів</h2>
+<!-- notification modal -->
+<div id="modalBg" class="modal-bg" aria-hidden="true">
+  <div class="modal-card" id="modalCard"></div>
 </div>
 
-<div id="registerScreen" class="screen hidden">
-    <button onclick="goBackFromRegister()" class="arrow"><span class="arrowIcon">⬅</span></button>
-    <h2>Реєстрація</h2>
-    <input id="regName" type="text" placeholder="Ім'я">
-    <input id="regEmail" type="email" placeholder="Пошта (наприклад, name@gmail.com)">
-    <input id="regPass" type="password" placeholder="Пароль (вигадай будь-який)">
-    <button onclick="registerUser()">Зберегти акаунт</button>
+<!-- create-site modal -->
+<div id="createSiteModal" class="create-modal" aria-hidden="true">
+  <div class="create-card">
+    <h3>Додати сайт</h3>
+    <div id="siteImageDiv" title="Натисніть, щоб додати фото">
+      <input type="file" id="siteImageInput" accept="image/*" style="display:none;">
+      <span id="siteImagePlaceholder" style="font-size:28px;color:var(--muted)">+</span>
+    </div>
+    <div class="form" style="margin-top:8px;">
+      <input id="siteName" type="text" placeholder="Назва сайту">
+      <input id="siteDesc" type="text" placeholder="Опис сайту">
+      <input id="siteLink" type="text" placeholder="Силка на сайт">
+      <button id="saveSiteBtn" class="btn" style="margin-top:10px;">Зберегти</button>
+      <button onclick="closeSiteModal()" class="btn" style="margin-top:8px;background:#222;border:1px solid #444;">Відмінити</button>
+    </div>
+  </div>
 </div>
 
-<div id="loginScreen" class="screen hidden">
-    <button onclick="goBackFromLogin()" class="arrow"><span class="arrowIcon">⬅</span></button>
-    <h2>Вхід в акаунт</h2>
-    <input id="loginEmail" type="email" placeholder="Пошта">
-    <input id="loginPassword" type="password" placeholder="Пароль">
-    <button onclick="loginUser()">Увійти</button>
-</div>
-
-<div id="adminScreen" class="screen hidden">
-    <h2>Список користувачів</h2>
-    <div id="usersList" style="font-size:20px;"></div>
-    <button onclick="showScreen('screen1')">Повернутися</button>
-</div>
-
-<div class="modal-bg" id="modalBg">
-    <div class="modal" id="modalText"></div>
+<!-- photo preview modal -->
+<div id="photoModal">
+  <img id="photoPreview" alt="preview">
 </div>
 
 <script>
-// ==== Переход между экранами ====
+// helpers
+function el(id){ return document.getElementById(id); }
+function showModal(text, ms = 1600){
+  const bg = el('modalBg'), card = el('modalCard');
+  card.textContent = text;
+  bg.classList.add('show');
+  setTimeout(()=> bg.classList.remove('show'), ms);
+}
+
+const screens = ['screen1','screen2','profileScreen','registerScreen','loginScreen','adminScreen'];
 function showScreen(id){
-    document.querySelectorAll(".screen").forEach(s=>{
-        if(s.id===id){ s.classList.remove("hidden"); s.style.transform="translateX(100%)"; 
-            setTimeout(()=> s.style.transform="translateX(0)", 50); }
-        else { s.style.transform="translateX(-100%)"; s.classList.add("hidden"); }
-    });
+  screens.forEach(s=>{
+    const node = el(s);
+    if(s===id){ node.classList.add('visible'); node.classList.remove('hidden'); }
+    else { node.classList.remove('visible'); node.classList.add('hidden'); }
+  });
+  // animate main texts when showing main
+  if(id==='screen1'){ el('mainTitle')?.classList.add('visibleTxt'); el('lead')?.classList.add('visibleTxt'); }
 }
 
-// ==== Модальные окна ====
-function showModal(msg){
-    const bg = document.getElementById("modalBg");
-    document.getElementById("modalText").innerText = msg;
-    bg.style.display="flex";
-    setTimeout(()=> bg.style.display="none", 2000);
-}
-
-// ==== Аккаунты ====
-function registerUser(){
-    const name = regName.value.trim();
-    const email = regEmail.value.trim();
-    const pass = regPass.value.trim();
-    if(!name||!email||!pass){ showModal("Заповніть всі поля!"); return; }
-    if(!email.includes("@")||!email.endsWith("@gmail.com")){ showModal("Ви щось пропустили!"); return; }
-    if(pass.length<6){ showModal("Пароль замалий, зробіть його більшим!"); return; }
-    let users = JSON.parse(localStorage.getItem("users"))||[];
-    if(users.find(u=>u.email===email)){ showModal("Така пошта вже існує!"); return; }
-    users.push({name,email,pass});
-    localStorage.setItem("users", JSON.stringify(users));
-    localStorage.setItem("currentUser", JSON.stringify({name,email,pass}));
-    showModal("Вітаємо з реєстрацією!");
-    updateUserUI();
-    showScreen("screen1");
-}
-
-function loginUser(){
-    const email = loginEmail.value.trim();
-    const pass = loginPassword.value.trim();
-    let users = JSON.parse(localStorage.getItem("users"))||[];
-    const user = users.find(u=>u.email===email && u.pass===pass);
-    if(!user){ showModal("Хм... Ви десь помилилися"); return; }
-    localStorage.setItem("currentUser", JSON.stringify(user));
-    updateUserUI();
-    showScreen("screen1");
-}
-
-function logout(){
-    localStorage.removeItem("currentUser");
-    updateUserUI();
-    showScreen("screen1");
-}
+// storage helpers
+function loadUsers(){ return JSON.parse(localStorage.getItem('users')||'[]'); }
+function saveUsers(arr){ localStorage.setItem('users', JSON.stringify(arr)); }
+function setCurrentUser(u){ localStorage.setItem('currentUser', JSON.stringify(u)); }
+function getCurrentUser(){ return JSON.parse(localStorage.getItem('currentUser')||'null'); }
+function clearCurrentUser(){ localStorage.removeItem('currentUser'); }
 
 function updateUserUI(){
-    const data = JSON.parse(localStorage.getItem("currentUser"));
-    
-    // По умолчанию показываем кнопки входа/регистрации
-    document.getElementById("loginBtn").style.display="inline-block";
-    document.getElementById("registerBtn").style.display="inline-block";
-    document.getElementById("logoutBtn").style.display="none";
-    document.getElementById("adminBtn").style.display="none";
-    document.getElementById("welcomeUser").innerText = "";
-
-    if(!data) return;
-
-    document.getElementById("welcomeUser").innerText = "👋 Привіт, " + data.name + "!";
-    document.getElementById("loginBtn").style.display="none";
-    document.getElementById("registerBtn").style.display="none";
-    document.getElementById("logoutBtn").style.display="inline-block";
-
-    if(data.email==="09fushan90@gmail.com"){
-        document.getElementById("adminBtn").style.display="inline-block";
-    }
+  const cur = getCurrentUser();
+  // main buttons visibility
+  el('openLoginBtn').style.display = cur ? 'none' : 'inline-block';
+  el('openRegisterBtn').style.display = cur ? 'none' : 'inline-block';
+  el('btnProfile').style.display = 'inline-block';
+  el('logoutBtn').style.display = cur ? 'inline-block' : 'none';
+  el('adminBtn').style.display = 'none';
+  el('welcomeUser').textContent = cur ? `👋 Привіт, ${cur.name}!` : '';
+  // admin email: 09fushan90@gmail.com
+  if(cur && cur.email === '09fushan90@gmail.com'){ el('adminBtn').style.display = 'inline-block'; }
 }
 
-updateUserUI();
-
-function goNext(){ showScreen("screen2"); }
-function goBack(){ showScreen("screen1"); }
-function register(){ showScreen("registerScreen"); }
-function showLogin(){ showScreen("loginScreen"); }
-function goBackFromRegister(){ showScreen("screen1"); }
-function goBackFromLogin(){ showScreen("screen1"); }
-function showUsersList(){
-    let users = JSON.parse(localStorage.getItem("users"))||[];
-    usersList.innerHTML = users.map(u=>`<p>${u.name} — ${u.email}</p>`).join("");
-    showScreen("adminScreen");
+// PROFILE screen
+function updateProfileScreen(){
+  const cur = getCurrentUser();
+  const header = el('profileHeader'), actions = el('profileActions'), photo = el('profilePhoto'), photoInput = el('profilePhotoInput');
+  actions.innerHTML=''; photo.src=''; photo.alt='';
+  if(cur){
+    header.textContent = `Вітаємо, ${cur.name}!`;
+    // logout button
+    const logoutBtn = document.createElement('button'); logoutBtn.textContent = 'Вийти';
+    logoutBtn.className = 'btn';
+    logoutBtn.onclick = ()=>{ clearCurrentUser(); updateUserUI(); showScreen('screen1'); };
+    actions.appendChild(logoutBtn);
+    // show/upload photo
+    photoInput.style.display = 'none'; // hidden input; click on image will open
+    const photos = JSON.parse(localStorage.getItem('photos')||'{}');
+    if(photos[cur.email]) photo.src = photos[cur.email];
+    // clicking avatar opens file picker
+    photo.onclick = function(){ el('profilePhotoInput').click(); };
+    // file input change
+    photoInput.onchange = function(e){
+      const f = e.target.files[0];
+      if(!f) return;
+      const reader = new FileReader();
+      reader.onload = function(ev){
+        photo.src = ev.target.result;
+        photos[cur.email] = ev.target.result;
+        localStorage.setItem('photos', JSON.stringify(photos));
+        // small animation
+        photo.style.transform = 'scale(1.05)';
+        setTimeout(()=> photo.style.transform = '', 180);
+      };
+      reader.readAsDataURL(f);
+    };
+    // clicking avatar opens preview if src exists
+    photo.addEventListener('dblclick', ()=> {
+      if(photo.src) openPhotoModal(photo.src);
+    });
+    // also single click to preview if already exists
+    photo.addEventListener('click', (e)=>{
+      // if image exists and no file selection just preview
+      const curSrc = photo.src;
+      if(curSrc && !el('profilePhotoInput').files.length) openPhotoModal(curSrc);
+    });
+  } else {
+    header.textContent = 'Ви ще не зареєструвалися, але це можна виправити';
+    const loginBtn = document.createElement('button'); loginBtn.textContent='Увійти'; loginBtn.className='btn'; loginBtn.onclick = ()=> showScreen('loginScreen');
+    const regBtn = document.createElement('button'); regBtn.textContent='Зареєструватися'; regBtn.className='btn'; regBtn.onclick = ()=> showScreen('registerScreen');
+    actions.appendChild(loginBtn); actions.appendChild(regBtn);
+    photoInput.style.display = 'none';
+    photo.onclick = ()=> el('profilePhotoInput').click();
+  }
 }
+
+// PHOTO modal
+function openPhotoModal(src){
+  const m = el('photoModal'), img = el('photoPreview');
+  img.src = src;
+  m.style.display = 'flex';
+}
+if(el('photoModal')) el('photoModal').onclick = function(){ this.style.display = 'none'; };
+
+// REGISTER logic
+el('regSaveBtn').addEventListener('click', ()=>{
+  const name = el('regName').value.trim();
+  const email = el('regEmail').value.trim();
+  const pass = el('regPass').value.trim();
+  if(!name || !email || !pass){ showModal('Заповніть всі поля!'); return; }
+  if(!email.includes('@')){ showModal('Невірна адреса пошти'); return; }
+  if(pass.length < 6){ showModal('Пароль замалий, мінімум 6 символів'); return; }
+  const users = loadUsers();
+  if(users.find(u => u.email.toLowerCase() === email.toLowerCase())){ showModal('Така пошта вже існує!'); return; }
+  users.push({ name, email, pass });
+  saveUsers(users);
+  setCurrentUser({ name, email });
+  showModal('🎉 Вітаємо з реєстрацією!');
+  updateUserUI();
+  updateProfileScreen();
+  showScreen('profileScreen');
+});
+
+// LOGIN logic
+el('loginBtnScreen').addEventListener('click', ()=>{
+  const email = el('loginEmail').value.trim();
+  const pass = el('loginPassword').value.trim();
+  const users = loadUsers();
+  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.pass === pass);
+  if(!user){ showModal('Хм... Ви десь помилилися'); return; }
+  setCurrentUser({ name: user.name, email: user.email });
+  showModal('Успішний вхід');
+  updateUserUI();
+  updateProfileScreen();
+  showScreen('profileScreen');
+});
+
+// LOGOUT
+el('logoutBtn').addEventListener('click', ()=>{
+  clearCurrentUser();
+  showModal('Ви вийшли з акаунту');
+  updateUserUI();
+  showScreen('screen1');
+});
+
+// ADMIN panel
+el('adminBtn').addEventListener('click', ()=>{
+  const users = loadUsers();
+  const wrap = el('usersList');
+  wrap.innerHTML = users.length ? users.map(u => `<p>${u.name} — ${u.email}</p>`).join('') : '<p style="color:var(--muted)">Поки що немає користувачів</p>';
+  showScreen('adminScreen');
+});
+
+// MAIN buttons
+el('btnProfile').addEventListener('click', ()=>{
+  updateProfileScreen();
+  showScreen('profileScreen');
+});
+el('viewBtn').addEventListener('click', ()=>{
+  renderSites();
+  showScreen('screen2');
+});
+// show login/register screens
+el('openLoginBtn').addEventListener('click', ()=> showScreen('loginScreen'));
+el('openRegisterBtn').addEventListener('click', ()=> showScreen('registerScreen'));
+
+// SITES: storage, render, admin add
+function getSites(){ return JSON.parse(localStorage.getItem('sites')||'[]'); }
+function saveSites(arr){ localStorage.setItem('sites', JSON.stringify(arr)); }
+
+function renderSites(){
+  const container = el('sitesContainer');
+  const sites = getSites();
+  container.innerHTML = '';
+  if(!sites.length) container.innerHTML = '<p style="color:var(--muted); margin-top:12px;">Поки що немає сайтів</p>';
+  sites.forEach(s=>{
+    const card = document.createElement('div'); card.className='site-card';
+    if(s.image) card.innerHTML = `<img class="logo" src="${s.image}" alt="logo">`;
+    else card.innerHTML = `<div class="logo" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;color:var(--muted)">?</div>`;
+    card.innerHTML += `<h4 style="margin:6px 0 6px;">${escapeHtml(s.name)}</h4><p style="color:var(--muted);font-size:14px;min-height:34px">${escapeHtml(s.desc)}</p>`;
+    if(s.link) card.innerHTML += `<a href="${escapeAttr(s.link)}" target="_blank" rel="noopener">Перейти</a>`;
+    container.appendChild(card);
+  });
+
+  // admin + button in siteActions if admin
+  const actions = el('siteActions'); actions.innerHTML = '';
+  const cur = getCurrentUser();
+  if(cur && cur.email === '09fushan90@gmail.com'){
+    const add = document.createElement('button'); add.id='addSiteBtn'; add.className='btn'; add.textContent = '+';
+    add.onclick = openSiteModal;
+    actions.appendChild(add);
+  }
+}
+
+// escape helpers to avoid html injection when storing plain strings
+function escapeHtml(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escapeAttr(str){ return String(str).replace(/"/g,'&quot;'); }
+
+// create-site modal logic
+function openSiteModal(){ el('createSiteModal').style.display = 'flex'; el('siteImagePlaceholder').textContent = '+'; el('siteName').value=''; el('siteDesc').value=''; el('siteLink').value=''; el('siteImageDiv').style.backgroundImage=''; el('siteImageDiv').style.border='2px dashed #555'; }
+function closeSiteModal(){ el('createSiteModal').style.display = 'none'; }
+
+const siteImageDiv = el('siteImageDiv'), siteImgInput = el('siteImageInput'), siteImagePlaceholder = el('siteImagePlaceholder');
+siteImageDiv.onclick = ()=> siteImgInput.click();
+siteImgInput.onchange = function(e){
+  const f = e.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    siteImageDiv.style.backgroundImage = `url(${ev.target.result})`;
+    siteImageDiv.style.backgroundSize = 'cover';
+    siteImageDiv.style.backgroundPosition = 'center';
+    siteImageDiv.style.border = 'none';
+    siteImagePlaceholder.textContent = '';
+  };
+  reader.readAsDataURL(f);
+};
+
+// save site
+el('saveSiteBtn').addEventListener('click', ()=>{
+  const name = el('siteName').value.trim();
+  const desc = el('siteDesc').value.trim();
+  const link = el('siteLink').value.trim();
+  const bg = siteImageDiv.style.backgroundImage ? siteImageDiv.style.backgroundImage.slice(5, -2) : '';
+  if(!name || !desc || !link){ showModal('Заповніть назву, опис та ссилку'); return; }
+  const sites = getSites();
+  sites.push({ name, desc, link, image: bg });
+  saveSites(sites);
+  renderSites();
+  closeSiteModal();
+});
+
+// small utilities and init
+function init(){
+  // ensure main title + lead animate
+  el('mainTitle')?.classList.add('visibleTxt'); el('lead')?.classList.add('visibleTxt');
+  updateUserUI();
+
+  // show create-site modal close by clicking outside content
+  document.querySelectorAll('.create-modal').forEach(m=>{
+    m.addEventListener('click', (e)=>{ if(e.target === m) m.style.display='none'; });
+  });
+  // photo preview modal close on click (already set)
+  if(el('photoModal')) el('photoModal').onclick = function(){ this.style.display='none'; };
+
+  // Show admin add-button if already admin logged in
+  renderSites();
+}
+
+init();
 </script>
 </body>
 </html>
